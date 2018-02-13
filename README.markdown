@@ -8,7 +8,6 @@ Our top goals are clarity, consistency and brevity, in that order. Other referen
 
 * [Correctness](#correctness)
 * [Naming](#naming)
-  * [Prose](#prose)
   * [Delegates](#delegates)
   * [Use Type Inferred Context](#use-type-inferred-context)
   * [Generics](#generics)
@@ -24,7 +23,6 @@ Our top goals are clarity, consistency and brevity, in that order. Other referen
   * [Use of Self](#use-of-self)
   * [Protocol Conformance](#protocol-conformance)
   * [Computed Properties](#computed-properties)
-  * [Final](#final)
 * [Function Declarations](#function-declarations)
 * [Closure Expressions](#closure-expressions)
 * [Types](#types)
@@ -43,9 +41,6 @@ Our top goals are clarity, consistency and brevity, in that order. Other referen
   * [Failing Guards](#failing-guards)
 * [Semicolons](#semicolons)
 * [Parentheses](#parentheses)
-* [Organization and Bundle Identifier](#organization-and-bundle-identifier)
-* [Copyright Statement](#copyright-statement)
-* [Smiley Face](#smiley-face)
 * [References](#references)
 
 
