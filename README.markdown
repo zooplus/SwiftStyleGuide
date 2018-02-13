@@ -4,10 +4,6 @@
 
 Our top goals are clarity, consistency and brevity, in that order. Other references:
 
-* [Swift API Design Guidelines](https://swift.org/documentation/api-design-guidelines/)
-* [SwiftLint](https://github.com/realm/SwiftLint)
-* [Ray Wenderlich's style guide](https://github.com/raywenderlich/swift-style-guide)
-
 ## Table of Contents
 
 * [Correctness](#correctness)
@@ -595,6 +591,8 @@ let currentBounds: CGRect = computeViewBounds()
 let names = [String]()
 ```
 
+Property declarations are an exception to this rule and should have type annotation.
+
 #### Type Annotation for Empty Arrays and Dictionaries
 
 For empty arrays and dictionaries, use type annotation. (For an array or dictionary assigned to a large, multi-line literal, use type annotation.)
@@ -658,7 +656,7 @@ let value = max(x, y, z)  // another free function that feels natural
 
 ## Memory Management
 
-Code (even non-production, tutorial demo code) should not create reference cycles. Analyze your object graph and prevent strong cycles with `weak` and `unowned` references. Alternatively, use value types (`struct`, `enum`) to prevent cycles altogether.
+Code should not create reference cycles. Analyze your object graph and prevent strong cycles with `weak` and `unowned` references.
 
 ### Extending object lifetime
 
@@ -667,11 +665,10 @@ Extend object lifetime using the `[weak self]` and `guard let strongSelf = self 
 **Preferred**
 ```swift
 resource.request().onComplete { [weak self] response in
-  guard let strongSelf = self else {
-    return
-  }
-  let model = strongSelf.updateModel(response)
-  strongSelf.updateUI(model)
+	guard let strongSelf = self else { return }
+  
+	let model = strongSelf.updateModel(response)
+	strongSelf.updateUI(model)
 }
 ```
 
@@ -679,8 +676,8 @@ resource.request().onComplete { [weak self] response in
 ```swift
 // might crash if self is released before response returns
 resource.request().onComplete { [unowned self] response in
-  let model = self.updateModel(response)
-  self.updateUI(model)
+	let model = self.updateModel(response)
+	self.updateUI(model)
 }
 ```
 
@@ -688,14 +685,14 @@ resource.request().onComplete { [unowned self] response in
 ```swift
 // deallocate could happen between updating the model and updating UI
 resource.request().onComplete { [weak self] response in
-  let model = self?.updateModel(response)
-  self?.updateUI(model)
+	let model = self?.updateModel(response)
+	self?.updateUI(model)
 }
 ```
 
 ## Access Control
 
-Full access control annotation in tutorials can distract from the main topic and is not required. Using `private` and `fileprivate` appropriately, however, adds clarity and promotes encapsulation. Prefer `private` to `fileprivate` when possible. Using extensions may require you to use `fileprivate`.
+Using `private` and `fileprivate` appropriately adds clarity and promotes encapsulation. Prefer `private` to `fileprivate` when possible. Using extensions may require you to use `fileprivate`.
 
 Only explicitly use `open`, `public`, and `internal` when you require a full access control specification.
 
@@ -706,7 +703,7 @@ Use access control as the leading property specifier. The only things that shoul
 private let message = "Great Scott!"
 
 class TimeMachine {  
-  fileprivate dynamic lazy var fluxCapacitor = FluxCapacitor()
+	fileprivate dynamic lazy var fluxCapacitor = FluxCapacitor()
 }
 ```
 
@@ -715,7 +712,7 @@ class TimeMachine {
 fileprivate let message = "Great Scott!"
 
 class TimeMachine {  
-  lazy dynamic fileprivate var fluxCapacitor = FluxCapacitor()
+	lazy dynamic fileprivate var fluxCapacitor = FluxCapacitor()
 }
 ```
 
@@ -726,19 +723,19 @@ Prefer the `for-in` style of `for` loop over the `while-condition-increment` sty
 **Preferred:**
 ```swift
 for _ in 0..<3 {
-  print("Hello three times")
+	print("Hello three times")
 }
 
 for (index, person) in attendeeList.enumerated() {
-  print("\(person) is at position #\(index)")
+	print("\(person) is at position #\(index)")
 }
 
 for index in stride(from: 0, to: items.count, by: 2) {
-  print(index)
+	print(index)
 }
 
 for index in (0...3).reversed() {
-  print(index)
+	print(index)
 }
 ```
 
@@ -746,16 +743,16 @@ for index in (0...3).reversed() {
 ```swift
 var i = 0
 while i < 3 {
-  print("Hello three times")
-  i += 1
+	print("Hello three times")
+	i += 1
 }
 
 
 var i = 0
 while i < attendeeList.count {
-  let person = attendeeList[i]
-  print("\(person) is at position #\(i)")
-  i += 1
+	let person = attendeeList[i]
+	print("\(person) is at position #\(i)")
+	i += 1
 }
 ```
 
@@ -767,15 +764,15 @@ When coding with conditionals, the left-hand margin of the code should be the "g
 ```swift
 func computeFFT(context: Context?, inputData: InputData?) throws -> Frequencies {
 
-  guard let context = context else {
-    throw FFTError.noContext
-  }
-  guard let inputData = inputData else {
-    throw FFTError.noInputData
-  }
+	guard let context = context else {
+		throw FFTError.noContext
+	}
+	guard let inputData = inputData else {
+		throw FFTError.noInputData
+	}
 
-  // use context and input to compute the frequencies
-  return frequencies
+	// use context and input to compute the frequencies
+	return frequencies
 }
 ```
 
@@ -783,17 +780,17 @@ func computeFFT(context: Context?, inputData: InputData?) throws -> Frequencies 
 ```swift
 func computeFFT(context: Context?, inputData: InputData?) throws -> Frequencies {
 
-  if let context = context {
-    if let inputData = inputData {
-      // use context and input to compute the frequencies
+	if let context = context {
+		if let inputData = inputData {
+		// use context and input to compute the frequencies
 
-      return frequencies
-    } else {
-      throw FFTError.noInputData
-    }
-  } else {
-    throw FFTError.noContext
-  }
+			return frequencies
+		} else {
+			throw FFTError.noInputData
+		}
+	} else {
+		throw FFTError.noContext
+	}
 }
 ```
 
@@ -804,7 +801,7 @@ When multiple optionals are unwrapped either with `guard` or `if let`, minimize 
 guard let number1 = number1,
       let number2 = number2,
       let number3 = number3 else {
-  fatalError("impossible")
+	fatalError("impossible")
 }
 // do something with numbers
 ```
@@ -812,17 +809,17 @@ guard let number1 = number1,
 **Not Preferred:**
 ```swift
 if let number1 = number1 {
-  if let number2 = number2 {
-    if let number3 = number3 {
-      // do something with numbers
-    } else {
-      fatalError("impossible")
-    }
-  } else {
-    fatalError("impossible")
-  }
-} else {
-  fatalError("impossible")
+	if let number2 = number2 {
+		if let number3 = number3 {
+			// do something with numbers
+		} else {
+			fatalError("impossible")
+		}
+	} else {
+		fatalError("impossible")
+	} else {
+		fatalError("impossible")
+	}
 }
 ```
 
@@ -873,64 +870,11 @@ In larger expressions, optional parentheses can sometimes make code read more cl
 let playerMark = (player == current ? "X" : "O")
 ```
 
-## Organization and Bundle Identifier
-
-Where an Xcode project is involved, the organization should be set to `Ray Wenderlich` and the Bundle Identifier set to `com.razeware.TutorialName` where `TutorialName` is the name of the tutorial project.
-
-![Xcode Project settings](screens/project_settings.png)
-
-## Copyright Statement
-
-The following copyright statement should be included at the top of every source
-file:
-
-```swift
-/// Copyright (c) 2018 Razeware LLC
-/// 
-/// Permission is hereby granted, free of charge, to any person obtaining a copy
-/// of this software and associated documentation files (the "Software"), to deal
-/// in the Software without restriction, including without limitation the rights
-/// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-/// copies of the Software, and to permit persons to whom the Software is
-/// furnished to do so, subject to the following conditions:
-/// 
-/// The above copyright notice and this permission notice shall be included in
-/// all copies or substantial portions of the Software.
-/// 
-/// Notwithstanding the foregoing, you may not use, copy, modify, merge, publish,
-/// distribute, sublicense, create a derivative work, and/or sell copies of the
-/// Software in any work that is designed, intended, or marketed for pedagogical or
-/// instructional purposes related to programming, coding, application development,
-/// or information technology.  Permission for such use, copying, modification,
-/// merger, publication, distribution, sublicensing, creation of derivative works,
-/// or sale is expressly withheld.
-/// 
-/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-/// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-/// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-/// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-/// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-/// THE SOFTWARE.
-```
-
-## Smiley Face
-
-Smiley faces are a very prominent style feature of the [raywenderlich.com](https://www.raywenderlich.com/) site! It is very important to have the correct smile signifying the immense amount of happiness and excitement for the coding topic. The closing square bracket `]` is used because it represents the largest smile able to be captured using ASCII art. A closing parenthesis `)` creates a half-hearted smile, and thus is not preferred.
-
-**Preferred:**
-```
-:]
-```
-
-**Not Preferred:**
-```
-:)
-```  
-
 ## References
 
 * [The Swift API Design Guidelines](https://swift.org/documentation/api-design-guidelines/)
 * [The Swift Programming Language](https://developer.apple.com/library/prerelease/ios/documentation/swift/conceptual/swift_programming_language/index.html)
 * [Using Swift with Cocoa and Objective-C](https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/BuildingCocoaApps/index.html)
 * [Swift Standard Library Reference](https://developer.apple.com/library/prerelease/ios/documentation/General/Reference/SwiftStandardLibraryReference/index.html)
+* [SwiftLint](https://github.com/realm/SwiftLint)
+* [Ray Wenderlich's style guide](https://github.com/raywenderlich/swift-style-guide)
