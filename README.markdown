@@ -1,9 +1,12 @@
-# The Official raywenderlich.com Swift Style Guide.
-### Updated for Swift 3
+# The Official zooplus Swift Style Guide.
 
-This style guide is different from others you may see, because the focus is centered on readability for print and the web. We created this style guide to keep the code in our books, tutorials, and starter kits nice and consistent — even though we have many different authors working on the books.
+### Updated for Swift 4
 
-Our overarching goals are clarity, consistency and brevity, in that order.
+Our top goals are clarity, consistency and brevity, in that order. Other references:
+
+* [Swift API Design Guidelines](https://swift.org/documentation/api-design-guidelines/)
+* [SwiftLint](https://github.com/realm/SwiftLint)
+* [Ray Wenderlich's style guide](https://github.com/raywenderlich/swift-style-guide)
 
 ## Table of Contents
 
@@ -52,7 +55,7 @@ Our overarching goals are clarity, consistency and brevity, in that order.
 
 ## Correctness
 
-Strive to make your code compile without warnings. This rule informs many style decisions such as using `#selector` types instead of string literals.
+Strive to make your code compile without warnings.
 
 ## Naming
 
@@ -84,24 +87,10 @@ Descriptive and consistent naming makes software easier to read and understand. 
 - labeling closure and tuple parameters
 - taking advantage of default parameters
 
-### Prose
-
-When referring to methods in prose, being unambiguous is critical. To refer to a method name, use the simplest form possible.
-
-1. Write the method name with no parameters.  **Example:** Next, you need to call the method `addTarget`.
-2. Write the method name with argument labels.  **Example:** Next, you need to call the method `addTarget(_:action:)`.
-3. Write the full method name with argument labels and types. **Example:** Next, you need to call the method `addTarget(_: Any?, action: Selector?)`.
-
-For the above example using `UIGestureRecognizer`, 1 is unambiguous and preferred.
-
-**Pro Tip:** You can use Xcode's jump bar to lookup methods with argument labels.
-
-![Methods in Xcode jump bar](screens/xcode-jump-bar.png)
-
 
 ### Class Prefixes
 
-Swift types are automatically namespaced by the module that contains them and you should not add a class prefix such as RW. If two names from different modules collide you can disambiguate by prefixing the type name with the module name. However, only specify the module name when there is possibility for confusion which should be rare.
+Swift types are automatically namespaced by the module that contains them and you should not add a class prefix such as ZP. If two names from different modules collide you can disambiguate by prefixing the type name with the module name. However, only specify the module name when there is possibility for confusion (which should be rare).
 
 ```swift
 import SomeModule
@@ -111,7 +100,7 @@ let myClass = MyModule.UsefulClass()
 
 ### Delegates
 
-When creating custom delegate methods, an unnamed first parameter should be the delegate source. (UIKit contains numerous examples of this.)
+When creating custom delegate methods, an unnamed first parameter should be the delegate source. (UIKit contains numerous examples of this).
 
 **Preferred:**
 ```swift
@@ -127,7 +116,25 @@ func namePickerShouldReload() -> Bool
 
 ### Use Type Inferred Context
 
-Use compiler inferred context to write shorter, clear code.  (Also see [Type Inference](#type-inference).)
+Use compiler inferred context to write shorter, clear code. (Also see [Type Inference](#type-inference).)
+
+**Preferred:**
+```swift
+let selector = #selector(viewDidLoad)
+view.backgroundColor = .red
+let toView = context.view(forKey: .to)
+let view = UIView(frame: .zero)
+```
+
+**Not Preferred:**
+```swift
+let selector = #selector(ViewController.viewDidLoad)
+view.backgroundColor = UIColor.red
+let toView = context.view(forKey: UITransitionContextViewKey.to)
+let view = UIView(frame: CGRect.zero)
+```
+
+On the other hand, when declaring class properties, always specify the type. It makes it easier to read and faster to compile.
 
 **Preferred:**
 ```swift
@@ -151,16 +158,18 @@ Generic type parameters should be descriptive, upper camel case names. When a ty
 
 **Preferred:**
 ```swift
-struct Stack<Element> { ... }
-func write<Target: OutputStream>(to target: inout Target)
-func swap<T>(_ a: inout T, _ b: inout T)
+struct Person {
+	var firstName: String = ""
+	var lastName: String = ""
+}
 ```
 
 **Not Preferred:**
 ```swift
-struct Stack<T> { ... }
-func write<target: OutputStream>(to target: inout target)
-func swap<Thing>(_ a: inout Thing, _ b: inout Thing)
+struct Person {
+	var firstName = ""
+	var lastName = ""
+}
 ```
 
 ### Language
@@ -209,15 +218,11 @@ class MyViewController: UIViewController, UITableViewDataSource, UIScrollViewDel
 }
 ```
 
-Since the compiler does not allow you to re-declare protocol conformance in a derived class, it is not always required to replicate the extension groups of the base class. This is especially true if the derived class is a terminal class and a small number of methods are being overridden. When to preserve the extension groups is left to the discretion of the author.
-
 For UIKit view controllers, consider grouping lifecycle, custom accessors, and IBAction in separate class extensions.
 
 ### Unused Code
 
-Unused (dead) code, including Xcode template code and placeholder comments should be removed. An exception is when your tutorial or book instructs the user to use the commented code.
-
-Aspirational methods not directly associated with the tutorial whose implementation simply calls the superclass should also be removed. This includes any empty/unused UIApplicationDelegate methods.
+Unused (dead) code, including Xcode template code and placeholder comments should be removed. This includes any empty/unused UIApplicationDelegate methods.
 
 **Preferred:**
 ```swift
@@ -250,10 +255,7 @@ Keep imports minimal. For example, don't import `UIKit` when importing `Foundati
 
 ## Spacing
 
-* Indent using 2 spaces rather than tabs to conserve space and help prevent line wrapping. Be sure to set this preference in Xcode and in the Project settings as shown below:
-
-![Xcode indent settings](screens/indentation.png)
-
+* Indent using tabs
 * Method braces and other braces (`if`/`else`/`switch`/`while` etc.) always open on the same line as the statement but close on a new line.
 * Tip: You can re-indent by selecting some code (or ⌘A to select all) and then Control-I (or Editor\Structure\Re-Indent in the menu). Some of the Xcode template code will have 4-space tabs hard coded, so this is a good way to fix that.
 
@@ -297,13 +299,13 @@ class TestDatabase : Database {
 
 * Long lines should be wrapped at around 70 characters. A hard limit is intentionally not specified.
 
-* Avoid trailing whitespaces at the ends of lines.
+* Remove trailing whitespaces at the ends of lines.
 
 * Add a single newline character at the end of each file.
 
 ## Comments
 
-When they are needed, use comments to explain **why** a particular piece of code does something. Comments must be kept up-to-date or deleted.
+When they are needed, use comments to explain **why** a particular piece of code does something, especially for public methods. Comments must be kept up-to-date or deleted.
 
 Avoid block comments inline with code, as the code should be as self-documenting as possible. *Exception: This does not apply to those comments used to generate documentation.*
 
@@ -316,23 +318,18 @@ Remember, structs have [value semantics](https://developer.apple.com/library/mac
 
 Classes have [reference semantics](https://developer.apple.com/library/mac/documentation/Swift/Conceptual/Swift_Programming_Language/ClassesAndStructures.html#//apple_ref/doc/uid/TP40014097-CH13-XID_145). Use classes for things that do have an identity or a specific life cycle. You would model a person as a class because two person objects are two different things. Just because two people have the same name and birthdate, doesn't mean they are the same person. But the person's birthdate would be a struct because a date of 3 March 1950 is the same as any other date object for 3 March 1950. The date itself doesn't have an identity.
 
-Sometimes, things should be structs but need to conform to `AnyObject` or are historically modeled as classes already (`NSDate`, `NSSet`). Try to follow these guidelines as closely as possible.
-
 ### Example definition
 
 Here's an example of a well-styled class definition:
 
 ```swift
 class Circle: Shape {
-  var x: Int, y: Int
-  var radius: Double
-  var diameter: Double {
-    get {
-      return radius * 2
-    }
-    set {
-      radius = newValue / 2
-    }
+  	var x: Int 
+	var y: Int
+	var radius: Double
+	var diameter: Double {
+ 		get { return radius * 2 }
+		set { radius = newValue / 2 }
   }
 
   init(x: Int, y: Int, radius: Double) {
@@ -341,30 +338,29 @@ class Circle: Shape {
     self.radius = radius
   }
 
-  convenience init(x: Int, y: Int, diameter: Double) {
-    self.init(x: x, y: y, radius: diameter / 2)
-  }
+	convenience init(x: Int, y: Int, diameter: Double) {
+		self.init(x: x, y: y, radius: diameter / 2)
+  	}
 
-  override func area() -> Double {
-    return Double.pi * radius * radius
-  }
+ 	override func area() -> Double {
+		return Double.pi * radius * radius
+	}
 }
 
 extension Circle: CustomStringConvertible {
-  var description: String {
-    return "center = \(centerString) area = \(area())"
-  }
-  private var centerString: String {
-    return "(\(x),\(y))"
-  }
+	var description: String {
+		return "center = \(centerString) area = \(area())"
+ 	}
+	private var centerString: String {
+		return "(\(x),\(y))"
+	}
 }
 ```
 
 The example above demonstrates the following style guidelines:
 
  + Specify types for properties, variables, constants, argument declarations and other statements with a space after the colon but not before, e.g. `x: Int`, and `Circle: Shape`.
- + Define multiple variables and structures on a single line if they share a common purpose / context.
- + Indent getter and setter definitions and property observers.
+ + Indent getter and setter definitions and property observers. Keep the code in the same line of the getter and setter definitions if there's only one line of code.
  + Don't add modifiers such as `internal` when they're already the default. Similarly, don't repeat the access modifier when overriding a method.
  + Organize extra functionality (e.g. printing) in extensions.
  + Hide non-shared, implementation details such as `centerString` inside the extension using `private` access control.
