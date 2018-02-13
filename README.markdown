@@ -379,30 +379,16 @@ For conciseness, if a computed property is read-only, omit the get clause. The g
 **Preferred:**
 ```swift
 var diameter: Double {
-  return radius * 2
+	return radius * 2
 }
 ```
 
 **Not Preferred:**
 ```swift
 var diameter: Double {
-  get {
-    return radius * 2
-  }
-}
-```
-
-### Final
-
-Marking classes or members as `final` in tutorials can distract from the main topic and is not required. Nevertheless, use of `final` can sometimes clarify your intent and is worth the cost. In the below example, `Box` has a particular purpose and customization in a derived class is not intended. Marking it `final` makes that clear.
-
-```swift
-// Turn any generic type into a reference type using this Box class.
-final class Box<T> {
-  let value: T
-  init(_ value: T) {
-    self.value = value
-  }
+	get {
+		return radius * 2
+	}
 }
 ```
 
@@ -455,24 +441,24 @@ UIView.animate(withDuration: 1.0, animations: {
 }
 ```
 
-For single-expression closures where the context is clear, use implicit returns:
+For single-expression closures where the context is clear, use implicit returns and keep it in the same line:
 
 ```swift
-attendeeList.sort { a, b in
-  a > b
-}
+attendeeList.sort { $0 > $1 }
 ```
 
-Chained methods using trailing closures should be clear and easy to read in context. Decisions on spacing, line breaks, and when to use named versus anonymous arguments is left to the discretion of the author. Examples:
+Chained methods using trailing closures should be clear and easy to read in context. Decisions on spacing, line breaks, and when to use named versus anonymous arguments is left to the discretion of the developer. Examples:
 
 ```swift
 let value = numbers.map { $0 * 2 }.filter { $0 % 3 == 0 }.index(of: 90)
 
 let value = numbers
-  .map {$0 * 2}
-  .filter {$0 > 50}
-  .map {$0 + 10}
+  .map { $0 * 2 }
+  .filter { $0 > 50 }
+  .map { $0 + 10 }
 ```
+
+Always include exactly one white space after and before curly braces in closures.
 
 ## Types
 
@@ -489,8 +475,6 @@ let widthString = (width as NSNumber).stringValue    // String
 let width: NSNumber = 120.0                          // NSNumber
 let widthString: NSString = width.stringValue        // NSString
 ```
-
-In Sprite Kit code, use `CGFloat` if it makes the code more succinct by avoiding too many conversions.
 
 ### Constants
 
